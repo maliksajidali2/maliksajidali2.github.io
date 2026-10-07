@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Connecting TikTok — SocialFlow</title>
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<main class="doc">
+<h1>Finishing TikTok sign-in…</h1>
+<p id="msg" class="muted">Returning you to SocialFlow.</p>
+</main>
+<script>
+  // TikTok does not allow localhost redirect URLs, so it returns here and we forward the
+  // one-time code to the SocialFlow server, which verifies `state` and exchanges the code.
+  // The destination is fixed (no open redirect) and only TikTok's OAuth parameters are passed on.
+  (function () {
+    var APP = 'https://localhost:8787/auth/tiktok/callback';
+    var src = new URLSearchParams(location.search);
+    var out = new URLSearchParams();
+    ['code', 'state', 'scopes', 'error', 'error_description'].forEach(function (k) {
+      if (src.has(k)) out.set(k, src.get(k));
+    });
+    if (!out.has('state')) {
+      document.getElementById('msg').textContent = 'This page is only used during TikTok sign-in from SocialFlow.';
+      return;
+    }
+    location.replace(APP + '?' + out.toString());
+  })();
+</script>
+</body>
+</html>
